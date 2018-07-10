@@ -6,6 +6,12 @@ const Fruits = require('./models/fruits')
 
 app.use(bodyParser.urlencoded({extended:false}))
 
+const methodOverride = require('method-override');
+//...
+//after app has been defined
+//use methodOverride.  We'll be adding a query parameter to our delete form named _method
+app.use(methodOverride('_method'));
+
 //some middleware
 //app.use allows us to implement middleware
 //this middleware will run on every route. Check terminal log
@@ -38,9 +44,9 @@ app.use((req, res, next) => {
 //         readyToEat: true
 //     }
 // ];
-app.get('/fruits', (req, res) => {
-  res.send(Fruits)
-})
+// app.get('/fruits', (req, res) => {
+//   res.send(Fruits)
+// })
 
 // app.get('/fruits/:index', (request, response) => {
 //   console.log(request.params, '<-- this is req.params');
@@ -49,8 +55,10 @@ app.get('/fruits', (req, res) => {
 
 //Create new route. This happenes after show route because the //broweser would never read the word new. Because the :index //will read the 'new' word instead.
 
-app.get('/fruits/new', (req, res) => {
-  res.render('new.ejs')
+app.get('/fruits', (req, res) => {
+  res.render('index.ejs', {
+    fruits: Fruits
+  })
 })
 
 //this is the create route. see ejs file for form attribute
@@ -83,7 +91,9 @@ if(req.body.readyToEat === 'on') {
   //we do a redirect instead of send to redirect the response back to //the fruit route
 })
 
-
+app.get('/fruits/new', (req, res) => {
+  res.render('new.ejs')
+})
 //route
 app.get('/fruits/:index', (request, response) => {
   response.render('show.ejs', {
@@ -91,6 +101,17 @@ app.get('/fruits/:index', (request, response) => {
   })
 });
 
+//delete
+
+// app.delete('/fruits/:index', (req, res) => {
+//
+//   res.send('delete working')
+// })
+
+app.delete('/fruits/:index', (req, res) => {
+	fruits.splice(req.params.index, 1); //remove the item from the array
+	res.redirect('/fruits');  //redirect back to index route
+});
 
 app.listen(3000, () => {
     console.log("I am listening");
