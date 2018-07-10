@@ -67,8 +67,20 @@ app.get('/fruits/new', (req, res) => {
 // the clients request and the final destination
 // every request goes through the app.use(bodyParser) function.
 app.post('/fruits', (req, res) => {
-console.log(req.body, 'this is req.body, should be form info');
-  res.send('Post worked')
+
+  // the content of the form will always be in req.body
+  //we need to add req.body to the models
+console.log(req.body, 'this is req.body, should be form info')
+if(req.body.readyToEat === 'on') {
+  req.body.readyToEat = true;
+} else {
+  req.body.readyToEat = false;
+}
+  Fruits.push(req.body);
+
+  // res.send('Post worked')
+  res.redirect('/fruits');
+  //we do a redirect instead of send to redirect the response back to //the fruit route
 })
 
 
