@@ -1,6 +1,7 @@
-const express = require('express');
-const app     = express();
-const bodyParser = require('body-parser');
+const express        = require('express');
+const app            = express();
+const bodyParser     = require('body-parser');
+const methodOverride = require('method-override');
 // require Our Model - Remember Model is
 // a representation of our data
 // The model should capitalized
@@ -11,21 +12,15 @@ const Fruits = require('./models/fruits');
 // contents of a form, or the body of a request
 // the app.use sets up what middleware you are using
 app.use(bodyParser.urlencoded({extended: false}))
-
-app.use((req, res, next) => {
-  console.log('I run on every route');
-
-  // this sends the request to the next piece in the
-  // call stack (aka the next middleware piece or final route)
-  next()
-
-});
+app.use(methodOverride('_method'));
 
 
 // Creating the index route
 // index route should show all the fruits
 app.get('/fruits', (req, res) => {
-  res.send(Fruits)
+  res.render('index.ejs', {
+    fruits: Fruits
+  });
 });
 
 // This is the route that the form is sending
@@ -68,4 +63,20 @@ app.get('/fruits/:index', (req, res) => {
     fruit: Fruits[req.params.index] // This creates
     // a "fruit" variable in the show page
   })
+});
+
+// Delete route
+app.delete('/fruits/:index', (req, res) => {
+  Fruits.splice(req.params.index, 1);
+  console.log(req.params.index, ' this is req.params')
+  res.redirect('/fruits');
+})
+
+
+
+
+
+
+app.listen(3000, () => {
+  console.log('listening on port 3000');
 });
