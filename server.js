@@ -1,16 +1,18 @@
 const express = require('express');
 const app = express();//app is an object
 const bodyParser = require('body-parser');
+const methodOverride = require('method-override');
+
 
 const Fruits = require('./models/fruits')
 
 app.use(bodyParser.urlencoded({extended:false}))
+app.use(methodOverride('_method'));
 
-const methodOverride = require('method-override');
 //...
 //after app has been defined
 //use methodOverride.  We'll be adding a query parameter to our delete form named _method
-app.use(methodOverride('_method'));
+
 
 //some middleware
 //app.use allows us to implement middleware
