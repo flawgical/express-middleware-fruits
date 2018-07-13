@@ -15,6 +15,7 @@
     "ejs2": "^2.1.0",
     "express": "^4.16.3",
     "method-override": "^2.3.10",
+    "mongoose": "^5.2.3",
     "npm": "^6.1.0"
   }
 }

@@ -7,11 +7,37 @@ const router = express.Router();
 const Fruits = require('../models/fruits');
 // Creating the index route
 // index route should show all the fruits
+
+
+
+//commenting this out to find all fruits in the database without any parameters
+
+// router.get('/', (req, res) => {
+//   res.render('index.ejs', {
+//     fruits: Fruits
+//   });
+// });
+
+//instead writing this here
+
 router.get('/', (req, res) => {
+
+Fruits.find({}, (err, allFruits) => {
+  if (err) {
+    res.send(err);
+  } else {
+    //allFruits is the response from our db and when you are finding all of something it returns an array
+    res.render('index.ejs', {
+      fruits: allFruits
+    })
+  }
+})
+
   res.render('index.ejs', {
     fruits: Fruits
   });
 });
+
 
 // This is the route that the form is sending
 // its info too
@@ -26,13 +52,36 @@ router.post('/', (req, res) => {
     req.body.readyToEat = false;
   }
   // adding the contents of the form to the model
-  Fruits.push(req.body);
+
+
+  //we are getting rid of fruits.push because we will create something inside fruits below
+  // Fruits.push(req.body);
+
+// we are creating the new fruit by using the infor that lives in req.body
+
+Fruits.create(req.body, (err, createdFruit) => {
+  if(err) {
+    console.log(err)
+  } else {
+    console.log(createdFruit)
+
+    // we want to respond to the client after we get the response from the database. hence we will put our res.redirect /fruits inside this function
+    // this will redirect the response back to get /fruits route
+
+    res.redirect('/fruits');
+  }
+})
+
+
+
   // Now we can add the info from the form to our model
   // update our model
 
   // redirects the response back
   // to the get /fruits route
-  res.redirect('/fruits');
+
+  // res.redirect('/fruits'); **
+
   // res.send('it was completed')
 });
 

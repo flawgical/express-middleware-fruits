@@ -3,7 +3,8 @@ const app            = express();
 const bodyParser     = require('body-parser');
 const methodOverride = require('method-override');
 
-
+//requiring db here 
+require('./db/db');
 
 // require Our Model - Remember Model is
 // a representation of our data
