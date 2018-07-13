@@ -7,37 +7,25 @@ const router = express.Router();
 const Fruits = require('../models/fruits');
 // Creating the index route
 // index route should show all the fruits
-
-
-
-//commenting this out to find all fruits in the database without any parameters
-
-// router.get('/', (req, res) => {
-//   res.render('index.ejs', {
-//     fruits: Fruits
-//   });
-// });
-
-//instead writing this here
-
 router.get('/', (req, res) => {
+  // finding every fruit without a search parameter
+  Fruits.find({}, (err, allFruits) => {
+    if(err){
+      res.send(err);
+    } else {
 
-Fruits.find({}, (err, allFruits) => {
-  if (err) {
-    res.send(err);
-  } else {
-    //allFruits is the response from our db and when you are finding all of something it returns an array
-    res.render('index.ejs', {
-      fruits: allFruits
-    })
-  }
-})
+      // allFruits is the response from are db
+      // when you are finding all of something it
+      // returns an array
+        res.render('index.ejs', {
+          fruits: allFruits
+        });
+    };
+  });
 
-  // res.render('index.ejs', {
-  //   fruits: allFruits
-  // });
+
+
 });
-
 
 // This is the route that the form is sending
 // its info too
@@ -52,37 +40,19 @@ router.post('/', (req, res) => {
     req.body.readyToEat = false;
   }
   // adding the contents of the form to the model
-
-
-  //we are getting rid of fruits.push because we will create something inside fruits below
-  // Fruits.push(req.body);
-
-// we are creating the new fruit by using the infor that lives in req.body
-
-Fruits.create(req.body, (err, createdFruit) => {
-  if(err) {
-    console.log(err)
-  } else {
-    console.log(createdFruit)
-
-    // we want to respond to the client after we get the response from the database. hence we will put our res.redirect /fruits inside this function
-    // this will redirect the response back to get /fruits route
-
-    res.redirect('/fruits');
-  }
-})
-
-
-
-  // Now we can add the info from the form to our model
-  // update our model
-
-  // redirects the response back
-  // to the get /fruits route
-
-  // res.redirect('/fruits'); **
-
-  // res.send('it was completed')
+  Fruits.create(req.body, (err, createdFruit)=> {
+    if(err){
+      console.log(err)
+      res.send(err);
+    } else {
+      console.log(createdFruit)
+      // we want to respond to the client after
+      // we get the response from the database
+      // redirects the response back
+      // to the get /fruits route
+      res.redirect('/fruits');
+    }
+  });
 });
 
 
@@ -97,22 +67,25 @@ router.get('/new', (req, res) => {
 router.get('/:id/edit', (req, res) => {
 
   Fruits.findById(req.params.id, (err, foundFruit) => {
-    res.render('edit.ejs', {
-      fruit: foundFruit
+      res.render('edit.ejs', {
+        fruit: foundFruit
+      });
     });
-  })
 });
 
 
 // Show Route
-router.get('/:index', (req, res) => {
+router.get('/:id', (req, res) => {
 
   // Render is when you want to send
   // an ejs template to the client
-  res.render('show.ejs', {
-    fruit: Fruits[req.params.index] // This creates
-    // a "fruit" variable in the show page
-  });
+  Fruits.findById(req.params.id, (err, foundFruit) => {
+      res.render('show.ejs', {
+      fruit: foundFruit// This creates
+      // a "fruit" variable in the show page
+    });
+  })
+
 });
 
 router.put('/:id', (req, res) => {
@@ -128,46 +101,41 @@ router.put('/:id', (req, res) => {
     req.body.readyToEat = false;
   }
   // req.body is the updated form info
-// new:true says return to me the updated object
-// by default it is false and things that are false you don't have to specify
-//first argument is the document you are looking for
-// second is the content we are updating
-//
-Fruits.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, updateFruit) => {
-  if (err) {
-    res.send(err)
-  } else {
-    console.log(updateFruit, 'Check out model')
-    res.redirect('/fruits')
-  }
-})
+  //new true, says return to me the updated object, by default it is false
+  // things that are default you don't have to specify
+
+  // first argument, is the document you are looking for
+  // second argument, is the content you are updating with
+  Fruits.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, updatedFruit) => {
+    if(err){
+      res.send(err);
+    } else {
+        // Check to see if it is updating correctly
+        console.log(updatedFruit, ' CHeck our model')
+        res.redirect('/fruits');
+    }
+  })
+
 });
-  // Maybe its agood idea to check every part of this code
-  // Fruits[req.params.index] = req.body;
-  // Check to see if it is updating correctly
-
-
-
 
 
 // Delete route
-// router.delete('/:id', (req, res) => {
-//   Fruits.splice(req.params.index, 1);
-//   console.log(req.params.index, ' this is req.params')
-//   res.redirect('/fruits');
-// })
-
-//delete route with db and id
 router.delete('/:id', (req, res) => {
-  console.log(req.params.id, 'this is params in delete')
+
+  // Delete a specific fruit
+  console.log(req.params.id, ' this is params in delete')
   Fruits.findByIdAndRemove(req.params.id, (err, deletedFruit) => {
-    if(err) {
-      console.log(err)
+    if(err){
+      console.log(err, ' this is error in delete')
+      res.send(err);
     } else {
-      console.log(deletedFruit, 'this deletedFruit in the delete route')
-      res.redirect('/fruits')
+      console.log(deletedFruit, ' this deletedfruit in the delete rout');
+      res.redirect('/fruits');
     }
-  })
+  });
+
+
+
 })
 
 
