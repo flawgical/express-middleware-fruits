@@ -151,10 +151,23 @@ Fruits.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, updateFruit
 
 
 // Delete route
-router.delete('/:index', (req, res) => {
-  Fruits.splice(req.params.index, 1);
-  console.log(req.params.index, ' this is req.params')
-  res.redirect('/fruits');
+// router.delete('/:id', (req, res) => {
+//   Fruits.splice(req.params.index, 1);
+//   console.log(req.params.index, ' this is req.params')
+//   res.redirect('/fruits');
+// })
+
+//delete route with db and id
+router.delete('/:id', (req, res) => {
+  console.log(req.params.id, 'this is params in delete')
+  Fruits.findByIdAndRemove(req.params.id, (err, deletedFruit) => {
+    if(err) {
+      console.log(err)
+    } else {
+      console.log(deletedFruit, 'this deletedFruit in the delete route')
+      res.redirect('/fruits')
+    }
+  })
 })
 
 
