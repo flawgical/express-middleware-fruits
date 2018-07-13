@@ -33,9 +33,9 @@ Fruits.find({}, (err, allFruits) => {
   }
 })
 
-  res.render('index.ejs', {
-    fruits: Fruits
-  });
+  // res.render('index.ejs', {
+  //   fruits: allFruits
+  // });
 });
 
 
